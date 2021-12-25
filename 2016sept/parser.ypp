@@ -1,0 +1,107 @@
+%{
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <cstdlib>
+
+using namespace std;
+
+void yyerror(string s){
+	cerr << s << endl;
+	exit(EXIT_FAILURE);
+
+}
+
+extern int yylex();
+
+map<string, string> strings;
+
+%}
+
+%union{
+	int broj;
+	string* s;
+}
+
+%token PRINT
+%token<s> ID STRING
+%token<broj> BROJ
+
+%left '+' '-'
+%left '*'
+%left '.'
+%left 'x'
+
+
+%start program
+%type<s> izraz
+
+%%
+
+program: naredba ';' program {}
+	|
+	;
+
+naredba: ID '=' izraz 	{ 
+							strings[*$1] = *$3;
+							delete $1;
+						}
+	| PRINT '(' izraz ')' { cout << (*$3) << endl; delete $3;}
+
+izraz: izraz '*' izraz	{  $$ = new string(to_string(stoi(*$1, nullptr, 10) * stoi(*$3, nullptr, 10)));
+							delete $1; delete $3;}
+	| izraz '+' izraz	{ 
+							$$ = new string(to_string(stoi(*$1, nullptr, 10) + stoi(*$3, nullptr, 10)));
+							delete $1; delete $3;
+	 					}
+	| izraz '-' izraz	{ $$ = new string(to_string(stoi(*$1, nullptr, 10) - stoi(*$3, nullptr, 10)));
+							delete $1; delete $3;
+						}
+	| ID 				{ 
+							auto it = strings.find(*$1);
+							if(it == strings.end()){
+								yyerror("ne postoji prom");
+							}
+							$$ = new string(it->second);
+							delete $1;					
+						}
+	| STRING			{ 
+							$$ = new string(*$1);
+							delete $1; 
+						}
+	| BROJ				{ 
+							$$ = new string(to_string($1));
+						}
+	| ID '[' BROJ ',' BROJ ']' 	{ 
+									$$ = new string($1->substr($3, $5));
+									delete $1;
+								}
+	| izraz '.' izraz	{  	
+							$$ = new string((*$1) + (*$3));
+						}
+	| izraz 'x' izraz 	{
+							int i = stoi(*$3, nullptr, 10);
+							string* a = new string(*$1);
+							while(i > 0){
+								*$1 = *$1 + *a;
+								i--;
+							}
+							delete a;
+							$$ = $1;
+							delete $3;
+	 					}
+	| '(' izraz ')'		{ $$ = new string(*$2); delete $2;}
+	;
+
+%%
+
+int main(){
+	if(yyparse() != 0){
+		yyerror("syntax error");
+		exit(EXIT_FAILURE);
+	}
+	cout << "kul" << endl;
+	exit(EXIT_SUCCESS);
+}

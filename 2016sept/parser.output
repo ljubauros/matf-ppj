@@ -1,0 +1,419 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: naredba ';' program
+    2        | %empty
+
+    3 naredba: ID '=' izraz
+    4        | PRINT '(' izraz ')'
+
+    5 izraz: izraz '*' izraz
+    6      | izraz '+' izraz
+    7      | izraz '-' izraz
+    8      | ID
+    9      | STRING
+   10      | BROJ
+   11      | ID '[' BROJ ',' BROJ ']'
+   12      | izraz '.' izraz
+   13      | izraz 'x' izraz
+   14      | '(' izraz ')'
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 4 14
+    ')' (41) 4 14
+    '*' (42) 5
+    '+' (43) 6
+    ',' (44) 11
+    '-' (45) 7
+    '.' (46) 12
+    ';' (59) 1
+    '=' (61) 3
+    '[' (91) 11
+    ']' (93) 11
+    'x' (120) 13
+    error (256)
+    PRINT (258) 4
+    ID <s> (259) 3 8 11
+    STRING <s> (260) 9
+    BROJ <broj> (261) 10 11
+
+
+Nonterminals, with rules where they appear
+
+    $accept (19)
+        on left: 0
+    program (20)
+        on left: 1 2
+        on right: 0 1
+    naredba (21)
+        on left: 3 4
+        on right: 1
+    izraz <s> (22)
+        on left: 5 6 7 8 9 10 11 12 13 14
+        on right: 3 4 5 6 7 12 13 14
+
+
+State 0
+
+    0 $accept: . program $end
+
+    PRINT  shift, and go to state 1
+    ID     shift, and go to state 2
+
+    $default  reduce using rule 2 (program)
+
+    program  go to state 3
+    naredba  go to state 4
+
+
+State 1
+
+    4 naredba: PRINT . '(' izraz ')'
+
+    '('  shift, and go to state 5
+
+
+State 2
+
+    3 naredba: ID . '=' izraz
+
+    '='  shift, and go to state 6
+
+
+State 3
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 7
+
+
+State 4
+
+    1 program: naredba . ';' program
+
+    ';'  shift, and go to state 8
+
+
+State 5
+
+    4 naredba: PRINT '(' . izraz ')'
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 13
+
+
+State 6
+
+    3 naredba: ID '=' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 14
+
+
+State 7
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 8
+
+    1 program: naredba ';' . program
+
+    PRINT  shift, and go to state 1
+    ID     shift, and go to state 2
+
+    $default  reduce using rule 2 (program)
+
+    program  go to state 15
+    naredba  go to state 4
+
+
+State 9
+
+    8 izraz: ID .
+   11      | ID . '[' BROJ ',' BROJ ']'
+
+    '['  shift, and go to state 16
+
+    $default  reduce using rule 8 (izraz)
+
+
+State 10
+
+    9 izraz: STRING .
+
+    $default  reduce using rule 9 (izraz)
+
+
+State 11
+
+   10 izraz: BROJ .
+
+    $default  reduce using rule 10 (izraz)
+
+
+State 12
+
+   14 izraz: '(' . izraz ')'
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 17
+
+
+State 13
+
+    4 naredba: PRINT '(' izraz . ')'
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+
+    '+'  shift, and go to state 18
+    '-'  shift, and go to state 19
+    '*'  shift, and go to state 20
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+    ')'  shift, and go to state 23
+
+
+State 14
+
+    3 naredba: ID '=' izraz .
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+
+    '+'  shift, and go to state 18
+    '-'  shift, and go to state 19
+    '*'  shift, and go to state 20
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+
+    $default  reduce using rule 3 (naredba)
+
+
+State 15
+
+    1 program: naredba ';' program .
+
+    $default  reduce using rule 1 (program)
+
+
+State 16
+
+   11 izraz: ID '[' . BROJ ',' BROJ ']'
+
+    BROJ  shift, and go to state 24
+
+
+State 17
+
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+   14      | '(' izraz . ')'
+
+    '+'  shift, and go to state 18
+    '-'  shift, and go to state 19
+    '*'  shift, and go to state 20
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+    ')'  shift, and go to state 25
+
+
+State 18
+
+    6 izraz: izraz '+' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 26
+
+
+State 19
+
+    7 izraz: izraz '-' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 27
+
+
+State 20
+
+    5 izraz: izraz '*' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 28
+
+
+State 21
+
+   12 izraz: izraz '.' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 29
+
+
+State 22
+
+   13 izraz: izraz 'x' . izraz
+
+    ID      shift, and go to state 9
+    STRING  shift, and go to state 10
+    BROJ    shift, and go to state 11
+    '('     shift, and go to state 12
+
+    izraz  go to state 30
+
+
+State 23
+
+    4 naredba: PRINT '(' izraz ')' .
+
+    $default  reduce using rule 4 (naredba)
+
+
+State 24
+
+   11 izraz: ID '[' BROJ . ',' BROJ ']'
+
+    ','  shift, and go to state 31
+
+
+State 25
+
+   14 izraz: '(' izraz ')' .
+
+    $default  reduce using rule 14 (izraz)
+
+
+State 26
+
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    6      | izraz '+' izraz .
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+
+    '*'  shift, and go to state 20
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+
+    $default  reduce using rule 6 (izraz)
+
+
+State 27
+
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+    7      | izraz '-' izraz .
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+
+    '*'  shift, and go to state 20
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+
+    $default  reduce using rule 7 (izraz)
+
+
+State 28
+
+    5 izraz: izraz . '*' izraz
+    5      | izraz '*' izraz .
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+
+    '.'  shift, and go to state 21
+    'x'  shift, and go to state 22
+
+    $default  reduce using rule 5 (izraz)
+
+
+State 29
+
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   12      | izraz '.' izraz .
+   13      | izraz . 'x' izraz
+
+    'x'  shift, and go to state 22
+
+    $default  reduce using rule 12 (izraz)
+
+
+State 30
+
+    5 izraz: izraz . '*' izraz
+    6      | izraz . '+' izraz
+    7      | izraz . '-' izraz
+   12      | izraz . '.' izraz
+   13      | izraz . 'x' izraz
+   13      | izraz 'x' izraz .
+
+    $default  reduce using rule 13 (izraz)
+
+
+State 31
+
+   11 izraz: ID '[' BROJ ',' . BROJ ']'
+
+    BROJ  shift, and go to state 32
+
+
+State 32
+
+   11 izraz: ID '[' BROJ ',' BROJ . ']'
+
+    ']'  shift, and go to state 33
+
+
+State 33
+
+   11 izraz: ID '[' BROJ ',' BROJ ']' .
+
+    $default  reduce using rule 11 (izraz)
